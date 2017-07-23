@@ -1,44 +1,38 @@
 package org.ababup1192.springdesign;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class LoginController {
-    public List<User> users = new ArrayList<>();
+    private UserService userService;
+
+    @Autowired
+    public LoginController(UserService userService) {
+        this.userService = userService;
+    }
+
 
     @GetMapping("/")
     public ResponseEntity<List<User>> findAllUser() {
-        // Persistent + Response
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userService.all());
     }
 
     @PostMapping("/sign_up")
     public ResponseEntity<String> signUp(@RequestBody User user) {
-        // Business Logic
-        if (user.getAge() >= 15) {
-            // Persistent
-            users.add(user);
-            // Response
-            return ResponseEntity.ok("Register: " + user.getName());
-        } else {
-            // Response
-            throw new AgeLimitException();
-        }
+        final User registeredUser = userService.signUp(user);
+        return ResponseEntity.ok("Register: " + registeredUser.getName());
     }
 
     @PostMapping("/sign_in")
     public ResponseEntity<String> signIn(@RequestBody String name) {
-        // Persistent
-        return users.stream().filter(u -> u.getName().equals(name)).findFirst().
-                        // Response
-                        map(u -> ResponseEntity.ok(u.getName())).
-                        orElseThrow(() -> new UserNotFoundException(name));
+        final User signedInUser = userService.signIn(name);
+        return ResponseEntity.ok(signedInUser.getName());
     }
 }

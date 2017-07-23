@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 public class LoginController {
-    public List<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     @GetMapping("/")
     public ResponseEntity<List<User>> findAllUser() {

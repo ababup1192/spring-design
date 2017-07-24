@@ -18,7 +18,6 @@ public class LoginController {
         this.userService = userService;
     }
 
-
     @GetMapping("/")
     public ResponseEntity<List<User>> findAllUser() {
         return ResponseEntity.ok(userService.all());
